@@ -1,3 +1,4 @@
+
 #! /usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 import json
@@ -159,9 +160,9 @@ for i in range(len(data["features"])):
     prod=data["features"][i]["properties"]["productIdentifier"]
     feature_id=data["features"][i]["id"]
     if options.write_dir==None :
-        get_product='curl -o %s.zip -k -H "Authorization: Bearer %s" https://theia.cnes.fr/resto/collections/Landsat/%s/download/?issuerId=theia'%(prod,token,feature_id)
+        get_product='curl -o %s.zip -k -H "Authorization: Bearer %s" https://theia.cnes.fr/resto/collections/%s/%s/download/?issuerId=theia'%(prod,token,options.collection,feature_id)
     else :
-        get_product='curl -o %s/%s.zip -k -H "Authorization: Bearer %s" https://theia.cnes.fr/resto/collections/Landsat/%s/download/?issuerId=theia'%(options.write_dir,prod,token,feature_id)
+        get_product='curl -o %s/%s.zip -k -H "Authorization: Bearer %s" https://theia.cnes.fr/resto/collections/%s/%s/download/?issuerId=theia'%(options.write_dir,prod,token,options.collection,feature_id)
     print get_product
     if not(options.no_download):
         os.system(get_product)
