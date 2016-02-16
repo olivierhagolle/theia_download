@@ -1,4 +1,3 @@
-
 #! /usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 import json
@@ -159,11 +158,31 @@ for i in range(len(data["features"])):
     print data["features"][i]["properties"]["productIdentifier"],data["features"][i]["id"],data["features"][i]["properties"]["startDate"]
     prod=data["features"][i]["properties"]["productIdentifier"]
     feature_id=data["features"][i]["id"]
+
     if options.write_dir==None :
-        get_product='curl -o %s.zip -k -H "Authorization: Bearer %s" https://theia.cnes.fr/resto/collections/%s/%s/download/?issuerId=theia'%(prod,token,options.collection,feature_id)
-    else :
-        get_product='curl -o %s/%s.zip -k -H "Authorization: Bearer %s" https://theia.cnes.fr/resto/collections/%s/%s/download/?issuerId=theia'%(options.write_dir,prod,token,options.collection,feature_id)
+        options.write_dir=os.getcwd()
+    file_exists=os.path.exists("%s/%s.zip"%(options.write_dir,prod))
+    tmpfile="%s/tmp.tmp"%options.write_dir
+    get_product='curl -o %s -k -H "Authorization: Bearer %s" https://theia.cnes.fr/resto/collections/%s/%s/download/?issuerId=theia'%(tmpfile,token,options.collection,feature_id)
     print get_product
-    if not(options.no_download):
+    if not(options.no_download) and not(file_exists):
         os.system(get_product)
+
+        #check if binary product
+
+        with open(tmpfile) as f_tmp:
+            try:
+                tmp_data=json.load(f_tmp)
+                print "Result is a text file"
+                print tmp_data
+                sys.exit(-1)
+            except ValueError:
+                pass
+            
+        os.rename("%s"%tmpfile,"%s/%s.zip"%(options.write_dir,prod))
+        print "product saved as : %s/%s.zip"%(options.write_dir,prod)
+    elif file_exists:
+        print "%s already exists"%prod
+    elif options.no_download:
+        print "no download (-n) option was chosen"
 
