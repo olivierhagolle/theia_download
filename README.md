@@ -7,7 +7,7 @@ This code was written thanks to the precious help of one my colleague at CNES [J
 This code relies on python 2.7 and on the curl utility. Because of that, I guess it only works with linux.
 
 ## Examples
-This software is still quite basic, but if you have an account at theia, you may download products using command lines like 
+This software is still quite basic, but if you have an account at theia, and if you have accepted the necessary license, you may download products using command lines like 
 
 - `python ./theia_download.py -l 'Toulouse' -a auth_theia.txt -d 2015-11-01 -f 2015-12-01`
 
@@ -29,6 +29,8 @@ This software is still quite basic, but if you have an account at theia, you may
 
 The file auth_theia.txt must contain your email address and your password on the same line, such as follows :
 `your.email@address.fr top_secret`
+
+Please remember that you have to accept the licence corresponding to the product. This can only be done on line (https://theia.cnes.fr) by downloading manually one product.
 
 The program first fetches a token using your email address and password, and then uses it to download the products. As the token is only valid for two hours, itis advised to request only a reasonable number of products. 
 
