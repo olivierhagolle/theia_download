@@ -41,7 +41,7 @@ else :
     parser.add_option("-w","--write_dir", dest="write_dir", action="store",type="string",  \
             help="Path where the products should be downloaded",default='.')
     parser.add_option("-c","--collection", dest="collection", action="store", type="choice",  \
-            help="Collection within theia collections",choices=['Landsat','SpotWorldHeritage'],default='Landsat')
+            help="Collection within theia collections",choices=['Landsat','SpotWorldHeritage','SENTINEL2'],default='SENTINEL2')
     parser.add_option("-n","--no_download", dest="no_download", action="store_true",  \
             help="Do not download products, just print curl command",default=False)
     parser.add_option("-d", "--start_date", dest="start_date", action="store", type="string", \
@@ -123,6 +123,8 @@ except :
 #=============================================================
 
 get_token='curl -k -s -X POST --data-urlencode "ident=%s" --data-urlencode "pass=%s" https://theia.cnes.fr/services/authenticate/>token.json'%(email,passwd)
+
+
 
 os.system(get_token)
 
