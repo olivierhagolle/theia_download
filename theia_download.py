@@ -41,7 +41,7 @@ else :
     parser.add_option("-w","--write_dir", dest="write_dir", action="store",type="string",  \
             help="Path where the products should be downloaded",default='.')
     parser.add_option("-c","--collection", dest="collection", action="store", type="choice",  \
-            help="Collection within theia collections",choices=['Landsat','SpotWorldHeritage','SENTINEL2'],default='SENTINEL2')
+            help="Collection within theia collections",choices=['Landsat','SpotWorldHeritage'],default='Landsat')
     parser.add_option("-n","--no_download", dest="no_download", action="store_true",  \
             help="Do not download products, just print curl command",default=False)
     parser.add_option("-d", "--start_date", dest="start_date", action="store", type="string", \
@@ -124,8 +124,6 @@ except :
 
 get_token='curl -k -s -X POST --data-urlencode "ident=%s" --data-urlencode "pass=%s" https://theia.cnes.fr/services/authenticate/>token.json'%(email,passwd)
 
-
-
 os.system(get_token)
 
 with open('token.json') as data_file:
@@ -160,31 +158,11 @@ for i in range(len(data["features"])):
     print data["features"][i]["properties"]["productIdentifier"],data["features"][i]["id"],data["features"][i]["properties"]["startDate"]
     prod=data["features"][i]["properties"]["productIdentifier"]
     feature_id=data["features"][i]["id"]
-
     if options.write_dir==None :
-        options.write_dir=os.getcwd()
-    file_exists=os.path.exists("%s/%s.zip"%(options.write_dir,prod))
-    tmpfile="%s/tmp.tmp"%options.write_dir
-    get_product='curl -o %s -k -H "Authorization: Bearer %s" https://theia.cnes.fr/resto/collections/%s/%s/download/?issuerId=theia'%(tmpfile,token,options.collection,feature_id)
+        get_product='curl -o %s.zip -k -H "Authorization: Bearer %s" https://theia.cnes.fr/resto/collections/Landsat/%s/download/?issuerId=theia'%(prod,token,feature_id)
+    else :
+        get_product='curl -o %s/%s.zip -k -H "Authorization: Bearer %s" https://theia.cnes.fr/resto/collections/Landsat/%s/download/?issuerId=theia'%(options.write_dir,prod,token,feature_id)
     print get_product
-    if not(options.no_download) and not(file_exists):
+    if not(options.no_download):
         os.system(get_product)
-
-        #check if binary product
-
-        with open(tmpfile) as f_tmp:
-            try:
-                tmp_data=json.load(f_tmp)
-                print "Result is a text file"
-                print tmp_data
-                sys.exit(-1)
-            except ValueError:
-                pass
-            
-        os.rename("%s"%tmpfile,"%s/%s.zip"%(options.write_dir,prod))
-        print "product saved as : %s/%s.zip"%(options.write_dir,prod)
-    elif file_exists:
-        print "%s already exists"%prod
-    elif options.no_download:
-        print "no download (-n) option was chosen"
 
