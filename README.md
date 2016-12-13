@@ -4,10 +4,10 @@ This is a simple piece of code to automatically download the products provided b
 
 This code was written thanks to the precious help of one my colleague at CNES [Jérôme Gasperi](https://www.linkedin.com/pulse/rocket-earth-your-pocket-gasperi-jerome) who developped the "rocket" interface which is used by Theia, and the mechanism to get a token. It was then adapted by Dominique Clesse for the new Muscate interface to download Sentinel-2 products.
 
-This code relies on python 2.7 and on the curl utility. *Installing curl is therefore a prerequisite*. Because of that, I guess it only works with linux. To use the code, you need to have an account and a password (at theia)[http://theia.cnes.fr/atdistrib], and you need to add it to the config file as explaned in the authentification paragraph.
+This code relies on python 2.7 and on the curl utility. *Installing curl is therefore a prerequisite*. It has been developped and tested on Linux. It might work on windows, but I cannot test it. To use the code, you need to have an account and a password [at theia](http://theia.cnes.fr/atdistrib), and you need to add it to the config file as explaned in the authentification paragraph.
 
 ## Examples for various sensors
-This software is still quite basic, but if you have an account at theia, you may download products using command lines like 
+If you have an account at theia, you may download products using command lines like 
 
 - `python ./theia_download.py -l 'Toulouse' -c SENTINEL2 -a config_theia.cfg -d 2016-09-01 -f 2016-10-01`
 
