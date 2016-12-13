@@ -27,7 +27,7 @@ As you must have noted, there are two different config files, depending on the w
 
 - `python ./theia_download.py -t 'T31TCJ' -c SENTINEL2 -a config_theia.cfg -d 2016-09-01 -f 2016-10-01`
 
- which downloads the SENTINEL-2 products above tile T31TCJ, acquired in September 2016. Please not you have to add the initial T. This works only for Sentinel-2.
+ which downloads the SENTINEL-2 products above tile T31TCJ, acquired in September 2016. 
 
 - `python ./theia_download.py --lon 1 --lat 43.5 -c Landsat -a config_landsat.cfg -d 2015-11-01 -f 2015-12-01`
 
