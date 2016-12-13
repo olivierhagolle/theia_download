@@ -44,7 +44,7 @@ As you must have noted, there are two different config files, depending on the w
 
 The config file  config_landsat.cfg or  config_landsat.cfg  must contain your email address and your password as in the examples provided.
 
-If you need to go through a proxu, and if you have not configured your proxy variable, you may also use one of the files like config_theia_proxy.cfg or config_landsat_proxy.cfg and add your passwords in them.
+If you need to go through a proxy, and if you have not configured your proxy variable (export http_proxy=http://moi:secret@proxy.mycompany.fr:8050), you may also use one of the files like config_theia_proxy.cfg or config_landsat_proxy.cfg and add your passwords in them.
 
 The program first fetches a token using your email address and password, and then uses it to download the products. As the token is only valid for two hours, it is advised to request only a reasonable number of products. It is necessary to make a first download from the site manually in order to validate your accound and the licence in the case of SpotWorldHeritage.
 
