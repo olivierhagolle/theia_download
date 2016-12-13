@@ -1,6 +1,6 @@
 # theia_download
 
-This is a simple piece of code to automatically download the products provided by Theia land data center : https://theia.cnes.fr. It can download the products delivered by Theia, such as the (Sentinel-2 L2A products) [http://www.cesbio.ups-tlse.fr/multitemp/?page_id=6041] [Landsat L2A products](http://www.cesbio.ups-tlse.fr/multitemp/?page_id=3487) and the [SpotWorldHeritage L1C products](https://www.theia-land.fr/en/projects/spot-world-heritage).
+This is a simple piece of code to automatically download the products provided by Theia land data center : https://theia.cnes.fr. It can download the products delivered by Theia, such as the [Sentinel-2 L2A products] (http://www.cesbio.ups-tlse.fr/multitemp/?page_id=6041), [Landsat L2A products](http://www.cesbio.ups-tlse.fr/multitemp/?page_id=3487) and the [SpotWorldHeritage L1C products](https://www.theia-land.fr/en/projects/spot-world-heritage).
 
 This code was written thanks to the precious help of one my colleague at CNES [Jérôme Gasperi](https://www.linkedin.com/pulse/rocket-earth-your-pocket-gasperi-jerome) who developped the "rocket" interface which is used by Theia, and the mechanism to get a token. It was then adapted by Dominique Clesse for the new Muscate interface to download Sentinel-2 products.
 
