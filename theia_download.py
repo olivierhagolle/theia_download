@@ -4,6 +4,7 @@ import json
 import time
 import os, os.path, optparse,sys
 from datetime import date
+import urllib
 
 ###########################################################################
 class OptionParser (optparse.OptionParser):
@@ -25,10 +26,10 @@ if len(sys.argv) == 1:
     print '      '+sys.argv[0]+' [options]'
     print "     Aide : ", prog, " --help"
     print "        ou : ", prog, " -h"
-    print "example 1 : python %s -l 'Toulouse' -a config.cfg -d 2015-11-01 -f 2015-12-01"%sys.argv[0]
-    print "example 2 : python %s --lon 1 --lat 44 -a config.cfg -d 2015-11-01 -f 2015-12-01"%sys.argv[0]
-    print "example 3 : python %s --lonmin 1 --lonmax 2 --latmin 43 --latmax 44 -a config.cfg -d 2015-11-01 -f 2015-12-01"%sys.argv[0]
-    print "example 4 : python %s -l 'Toulouse' -a config.cfg -c SpotWorldHeritage -p SPOT4 -d 2005-11-01 -f 2006-12-01"%sys.argv[0]
+    print "example 1 : python %s -l 'Toulouse' -a config.cfg -d 2015-12-01 -f 2015-12-31"%sys.argv[0]
+    print "example 2 : python %s --lon 1 --lat 44 -a config.cfg -d 2015-12-01 -f 2015-12-31"%sys.argv[0]
+    print "example 3 : python %s --lonmin 1 --lonmax 2 --latmin 43 --latmax 44 -a config.cfg -d 2015-12-01 -f 2015-12-31"%sys.argv[0]
+    print "example 4 : python %s -l 'Toulouse' -a config.cfg -c SpotWorldHeritage -p SPOT4 -d 2005-12-01 -f 2006-12-31"%sys.argv[0]
     sys.exit(-1)
 else :
     usage = "usage: %prog [options] "
@@ -99,13 +100,17 @@ else :
           
 if geom=='point':
     query_geom='lat=%f\&lon=%f'%(options.lat,options.lon)
+    dict_query={'lat':options.lat,'lon':options.lon}
 elif geom=='rectangle':
     query_geom='box={lonmin},{latmin},{lonmax},{latmax}'.format(latmin=options.latmin,latmax=options.latmax,lonmin=options.lonmin,lonmax=options.lonmax)
+    dict_query={'box':'{lonmin},{latmin},{lonmax},{latmax}'.format(latmin=options.latmin,latmax=options.latmax,lonmin=options.lonmin,lonmax=options.lonmax)}
+
 elif geom=='location':
     query_geom="q=%s"%options.location
+    dict_query={'q':options.location}
 elif geom=='tile':
     query_geom='location=%s'%options.tile
-
+    dict_query={'location':options.tile}
     
 if options.start_date!=None:    
     start_date=options.start_date
@@ -188,9 +193,18 @@ os.remove('token.json')
 
 if os.path.exists('search.json'):
     os.remove('search.json')
-    
-search_catalog='curl -k %s -o search.json %s/%s/api/collections/%s/search.json?%s\&platform=%s\&startDate=%s\&completionDate=%s\&maxRecords=500'%(curl_proxy, config["serveur"], config["resto"],options.collection,query_geom,options.platform,start_date,end_date)
-#print search_catalog
+
+#query=  "%s\&platform=%s\&startDate=%s\&completionDate=%s\&maxRecords=500"\%(query_geom,options.platform,start_date,end_date)
+
+dict_query['platform']=options.platform
+dict_query['startDate']=start_date
+dict_query['completionDate']=end_date
+dict_query['maxRecords']=500
+
+query="%s/%s/api/collections/%s/search.json?"%(config["serveur"], config["resto"],options.collection)+urllib.urlencode(dict_query)
+print query
+search_catalog='curl -k %s -o search.json "%s"'%(curl_proxy,query)
+print search_catalog
 os.system(search_catalog)
 time.sleep(10)
 
