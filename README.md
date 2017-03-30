@@ -12,6 +12,10 @@ If you have an account at theia, you may download products using command lines l
 - `python ./theia_download.py -l 'Toulouse' -c SENTINEL2 -a config_theia.cfg -d 2016-09-01 -f 2016-10-01`
 
  which downloads the SENTINEL-2 products above Toulouse, acquired in September 2016.
+ 
+ - `python ./theia_download.py -l 'Toulouse' -c SENTINEL2 -a config_theia.cfg -d 2016-09-01 -f 2016-10-01 -m  50`
+
+ which downloads the SENTINEL-2 products above Toulouse, acquired in September 2016 with less tha 50% cloud cover
 
 - `python ./theia_download.py -l 'Toulouse' -c Landsat -a config_landsat.cfg -d 2016-09-01 -f 2016-10-01`
 
