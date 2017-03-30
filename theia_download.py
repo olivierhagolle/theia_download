@@ -65,6 +65,8 @@ else :
             help="end date, fmt('2015-12-23')",default=None)
     parser.add_option('-p', '--platform', type='choice', action='store', dest='platform',\
                       choices=['LANDSAT5','LANDSAT7','LANDSAT8','SPOT1','SPOT2','SPOT3','SPOT4','SPOT5','SENTINEL2A'], default='SENTINEL2A',  help='Satellite',)
+    parser.add_option('-m', '--maxcloud', type='int', action='store', dest='maxcloud',\
+                      default=101,  help='Maximum cloud cover (%)',)
 
     (options, args) = parser.parse_args()
 
@@ -206,7 +208,7 @@ print query
 search_catalog='curl -k %s -o search.json "%s"'%(curl_proxy,query)
 print search_catalog
 os.system(search_catalog)
-time.sleep(10)
+time.sleep(5)
 
 
 #====================
@@ -217,9 +219,12 @@ with open('search.json') as data_file:
     data = json.load(data_file)
 
 for i in range(len(data["features"])):    
-    print data["features"][i]["properties"]["productIdentifier"],data["features"][i]["id"],data["features"][i]["properties"]["startDate"]
     prod=data["features"][i]["properties"]["productIdentifier"]
     feature_id=data["features"][i]["id"]
+
+    cloudCover=int(data["features"][i]["properties"]["cloudCover"])
+    print prod,feature_id
+    print "cloudCover:",cloudCover
 
     if options.write_dir==None :
         options.write_dir=os.getcwd()
@@ -228,25 +233,30 @@ for i in range(len(data["features"])):
     get_product='curl %s -o %s -k -H "Authorization: Bearer %s" %s/%s/collections/%s/%s/download/?issuerId=theia'%(curl_proxy,tmpfile,token,config["serveur"], config["resto"],options.collection,feature_id)
 #    print get_product
     if not(options.no_download) and not(file_exists):
-        os.system(get_product)
+        #download only if cloudCover below maxcloud
+        if cloudCover <=options.maxcloud:
+            os.system(get_product)
+        
 
-        #check if binary product
+            #check if binary product
 
-        with open(tmpfile) as f_tmp:
-            try:
-                tmp_data=json.load(f_tmp)
-                print "Result is a text file"
-                print tmp_data
-                sys.exit(-1)
-            except ValueError:
-                pass
-            
-        os.rename("%s"%tmpfile,"%s/%s.zip"%(options.write_dir,prod))
-        print "product saved as : %s/%s.zip"%(options.write_dir,prod)
+            with open(tmpfile) as f_tmp:
+                try:
+                    tmp_data=json.load(f_tmp)
+                    print "Result is a text file"
+                    print tmp_data
+                    sys.exit(-1)
+                except ValueError:
+                    pass
+
+            os.rename("%s"%tmpfile,"%s/%s.zip"%(options.write_dir,prod))
+            print "product saved as : %s/%s.zip"%(options.write_dir,prod)
+        else :
+            print "cloud cover too high : %s"%(cloudCover) 
     elif file_exists:
         print "%s already exists"%prod
     elif options.no_download:
         print "no download (-n) option was chosen"
 
-os.remove('search.json')
+#os.remove('search.json')
 
