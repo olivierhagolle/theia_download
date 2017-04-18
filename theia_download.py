@@ -67,8 +67,13 @@ else :
                       choices=['LANDSAT5','LANDSAT7','LANDSAT8','SPOT1','SPOT2','SPOT3','SPOT4','SPOT5','SENTINEL2A'], default='SENTINEL2A',  help='Satellite',)
     parser.add_option('-m', '--maxcloud', type='int', action='store', dest='maxcloud',\
                       default=101,  help='Maximum cloud cover (%)',)
+    parser.add_option("--json", dest="search_json_file", action="store", type="string", \
+            help="Output search JSON filename", default=None)
 
     (options, args) = parser.parse_args()
+    
+if options.search_json_file==None or options.search_json_file=="":
+    options.search_json_file = 'search.json'
 
 if options.tile==None:
     if options.location==None:    
@@ -193,8 +198,8 @@ os.remove('token.json')
 # search catalogue
 #====================
 
-if os.path.exists('search.json'):
-    os.remove('search.json')
+if os.path.exists(options.search_json_file):
+    os.remove(options.search_json_file)
 
 #query=  "%s\&platform=%s\&startDate=%s\&completionDate=%s\&maxRecords=500"\%(query_geom,options.platform,start_date,end_date)
 
@@ -205,7 +210,7 @@ dict_query['maxRecords']=500
 
 query="%s/%s/api/collections/%s/search.json?"%(config["serveur"], config["resto"],options.collection)+urllib.urlencode(dict_query)
 print query
-search_catalog='curl -k %s -o search.json "%s"'%(curl_proxy,query)
+search_catalog='curl -k %s -o %s "%s"'%(curl_proxy,options.search_json_file,query)
 print search_catalog
 os.system(search_catalog)
 time.sleep(5)
@@ -215,7 +220,7 @@ time.sleep(5)
 # Download
 #====================
 
-with open('search.json') as data_file:    
+with open(options.search_json_file) as data_file:    
     data = json.load(data_file)
 
 for i in range(len(data["features"])):    
@@ -229,7 +234,8 @@ for i in range(len(data["features"])):
     if options.write_dir==None :
         options.write_dir=os.getcwd()
     file_exists=os.path.exists("%s/%s.zip"%(options.write_dir,prod))
-    tmpfile="%s/tmp.tmp"%options.write_dir
+    tmticks=time.time()
+    tmpfile="%s/tmp_%s.tmp"%(options.write_dir,tmticks)
     get_product='curl %s -o %s -k -H "Authorization: Bearer %s" %s/%s/collections/%s/%s/download/?issuerId=theia'%(curl_proxy,tmpfile,token,config["serveur"], config["resto"],options.collection,feature_id)
 #    print get_product
     if not(options.no_download) and not(file_exists):
@@ -258,5 +264,5 @@ for i in range(len(data["features"])):
     elif options.no_download:
         print "no download (-n) option was chosen"
 
-#os.remove('search.json')
+#os.remove(options.search_json_file)
 
