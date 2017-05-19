@@ -29,7 +29,7 @@ As you must have noted, there are two different config files, depending on the w
 
 ## Other options
 
-- `python ./theia_download.py -t 'T31TCJ' -c SENTINEL2 -a config_theia.cfg -d 2016-09-01 -f 2016-10-01`
+- `python ./theia_download.py -t T31TCJ -c SENTINEL2 -a config_theia.cfg -d 2016-09-01 -f 2016-10-01`
 
  which downloads the SENTINEL-2 products above tile T31TCJ, acquired in September 2016. 
 
