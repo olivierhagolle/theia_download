@@ -25,6 +25,10 @@ If you have an account at theia, you may download products using command lines l
 
  which downloads the SPOT World Heritage products above Toulouse, acquired in 2006.
 
+ - `python ./theia_download.py -l 'Foix' -c Snow -a config_theia.cfg -d 2016-11-01 -f 2016-12-01`
+
+ which downloads the Theia snow products above Foix (Pyrenees), acquired in November 2016. The collection option is case sensitive.
+
 As you must have noted, there are two different config files, depending on the whether you are using SENTINEL2 data (config_theia.cfg) , or Landsat or Spot world Heritage data (config_landsat.cfg). This is temporary, due to the start of MUSCATE ground segment, and soon, all the products will accessed with the config_theia.cfg authentification.
 
 ## Other options

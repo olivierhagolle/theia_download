@@ -42,7 +42,7 @@ else :
     parser.add_option("-w","--write_dir", dest="write_dir", action="store",type="string",  \
             help="Path where the products should be downloaded",default='.')
     parser.add_option("-c","--collection", dest="collection", action="store", type="choice",  \
-            help="Collection within theia collections",choices=['Landsat','SpotWorldHeritage','SENTINEL2'],default='SENTINEL2')
+            help="Collection within theia collections",choices=['Landsat','SpotWorldHeritage','SENTINEL2','Snow'],default='SENTINEL2')
     parser.add_option("-n","--no_download", dest="no_download", action="store_true",  \
             help="Do not download products, just print curl command",default=False)
     parser.add_option("-d", "--start_date", dest="start_date", action="store", type="string", \
