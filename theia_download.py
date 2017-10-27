@@ -64,7 +64,7 @@ else :
     parser.add_option("-f","--end_date", dest="end_date", action="store", type="string", \
             help="end date, fmt('2015-12-23')",default=None)
     parser.add_option('-p', '--platform', type='choice', action='store', dest='platform',\
-                      choices=['LANDSAT5','LANDSAT7','LANDSAT8','SPOT1','SPOT2','SPOT3','SPOT4','SPOT5','SENTINEL2A'], default='SENTINEL2A',  help='Satellite',)
+                      choices=['LANDSAT5','LANDSAT7','LANDSAT8','SPOT1','SPOT2','SPOT3','SPOT4','SPOT5','SENTINEL2A','SENTINEL2B'],  help='Satellite',)
     parser.add_option('-m', '--maxcloud', type='int', action='store', dest='maxcloud',\
                       default=101,  help='Maximum cloud cover (%)',)
 
@@ -198,7 +198,8 @@ if os.path.exists('search.json'):
 
 #query=  "%s\&platform=%s\&startDate=%s\&completionDate=%s\&maxRecords=500"\%(query_geom,options.platform,start_date,end_date)
 
-dict_query['platform']=options.platform
+if options.platform!=None :
+    dict_query['platform']=options.platform
 dict_query['startDate']=start_date
 dict_query['completionDate']=end_date
 dict_query['maxRecords']=500
@@ -229,7 +230,7 @@ for i in range(len(data["features"])):
     if options.write_dir==None :
         options.write_dir=os.getcwd()
     file_exists=os.path.exists("%s/%s.zip"%(options.write_dir,prod))
-    tmpfile="%s/tmp.tmp"%options.write_dir
+    tmpfile="%s/%s.tmp"%(options.write_dir,prod)
     get_product='curl %s -o %s -k -H "Authorization: Bearer %s" %s/%s/collections/%s/%s/download/?issuerId=theia'%(curl_proxy,tmpfile,token,config["serveur"], config["resto"],options.collection,feature_id)
 #    print get_product
     if not(options.no_download) and not(file_exists):
