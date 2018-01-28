@@ -206,7 +206,7 @@ dict_query['startDate']=start_date
 dict_query['completionDate']=end_date
 dict_query['maxRecords']=500
 if options.end_date!=None:
-    dict_query['relativeOrbitNumber']=end_date=options.relativeOrbitNumber
+    dict_query['relativeOrbitNumber']=options.relativeOrbitNumber
     
 
 query="%s/%s/api/collections/%s/search.json?"%(config["serveur"], config["resto"],options.collection)+urllib.urlencode(dict_query)
