@@ -67,6 +67,8 @@ else :
                       choices=['LANDSAT5','LANDSAT7','LANDSAT8','SPOT1','SPOT2','SPOT3','SPOT4','SPOT5','SENTINEL2A','SENTINEL2B'],  help='Satellite',)
     parser.add_option('-m', '--maxcloud', type='int', action='store', dest='maxcloud',\
                       default=101,  help='Maximum cloud cover (%)',)
+    parser.add_option('-r', '--relativeOrbitNumber', type='int', action='store', dest='relativeOrbitNumber',\
+                      default=None, help='Relative Orbit Number',)
 
     (options, args) = parser.parse_args()
 
@@ -203,6 +205,9 @@ if options.platform!=None :
 dict_query['startDate']=start_date
 dict_query['completionDate']=end_date
 dict_query['maxRecords']=500
+if options.end_date!=None:
+    dict_query['relativeOrbitNumber']=end_date=options.relativeOrbitNumber
+    
 
 query="%s/%s/api/collections/%s/search.json?"%(config["serveur"], config["resto"],options.collection)+urllib.urlencode(dict_query)
 print query
