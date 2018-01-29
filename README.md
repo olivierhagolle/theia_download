@@ -46,10 +46,12 @@ As you must have noted, there are two different config files, depending on the w
  which downloads the LANDSAT 8 products in latitude, longitude box around Toulouse, acquired in November 2015.
 
 - `python theia_download.py -l 'Toulouse' -a config_landsat.cfg -c SpotWorldHeritage -p SPOT4 -d 2005-11-01 -f 2006-12-01`
- which downloads the SpotWorldHeritage products acquired by SPOT5 in 2005-2006
+
+which downloads the SpotWorldHeritage products acquired by SPOT5 in 2005-2006
  
 - `python ./theia_download.py -c SENTINEL2 -t T31TCJ -r 51 d 2017-01-01 -f 2018-01-01`
- which downloads the SENTINEL2 T31TCJ tile, with the relative Orbit Number 51, acquired in 2017.
+
+which downloads the SENTINEL2 T31TCJ tile, with the relative Orbit Number 51, acquired in 2017.
 
 
 ## Authentification 
