@@ -8,14 +8,14 @@ import urllib
 
 ###########################################################################
 class OptionParser (optparse.OptionParser):
- 
+
     def check_required (self, opt):
       option = self.get_option(opt)
- 
+
       # Assumes the option's 'default' is set to None!
       if getattr(self.values, option.dest) is None:
           self.error("%s option not supplied" % option)
- 
+
 ###########################################################################
 
 #==================
@@ -34,9 +34,9 @@ if len(sys.argv) == 1:
 else :
     usage = "usage: %prog [options] "
     parser = OptionParser(usage=usage)
-  
+
     parser.add_option("-l","--location", dest="location", action="store", type="string", \
-            help="town name (pick one which is not too frequent to avoid confusions)",default=None)		
+            help="town name (pick one which is not too frequent to avoid confusions)",default=None)
     parser.add_option("-a","--alternative_config", dest="alternative_config", action="store", type="string", \
             help="alternative configuration file",default=None)
     parser.add_option("-w","--write_dir", dest="write_dir", action="store",type="string",  \
@@ -66,12 +66,16 @@ else :
     parser.add_option('-p', '--platform', type='choice', action='store', dest='platform',\
                       choices=['LANDSAT5','LANDSAT7','LANDSAT8','SPOT1','SPOT2','SPOT3','SPOT4','SPOT5','SENTINEL2A','SENTINEL2B'],  help='Satellite',)
     parser.add_option('-m', '--maxcloud', type='int', action='store', dest='maxcloud',\
-                      default=101,  help='Maximum cloud cover (%)',)
+                      default=101,  help='Maximum cloud cover (%)')
+    parser.add_option('-o', '--orbitNumber', type='int', action='store', dest='orbitNumber',\
+                      default=None, help='Orbit Number')
+    parser.add_option('-r', '--relativeOrbitNumber', type='int', action='store', dest='relativeOrbitNumber',\
+                      default=None, help='Relative Orbit Number')
 
     (options, args) = parser.parse_args()
 
 if options.tile==None:
-    if options.location==None:    
+    if options.location==None:
         if options.lat==None or options.lon==None:
             if options.latmin==None or options.lonmin==None or options.latmax==None or options.lonmax==None:
                 print "provide at least a point or  rectangle"
@@ -84,7 +88,7 @@ if options.tile==None:
             else:
                 print "please choose between point and rectangle, but not both"
                 sys.exit(-1)
-            
+
     else :
         if options.latmin==None and options.lonmin==None and options.latmax==None and options.lonmax==None and options.lat==None or options.lon==None:
             geom='location'
@@ -99,7 +103,7 @@ else :
         location='T'+options.tile
     else:
         print 'tile number much gave this format : T31TFJ'
-          
+
 if geom=='point':
     query_geom='lat=%f\&lon=%f'%(options.lat,options.lon)
     dict_query={'lat':options.lat,'lon':options.lon}
@@ -113,8 +117,8 @@ elif geom=='location':
 elif geom=='tile':
     query_geom='location=%s'%options.tile
     dict_query={'location':options.tile}
-    
-if options.start_date!=None:    
+
+if options.start_date!=None:
     start_date=options.start_date
     if options.end_date!=None:
         end_date=options.end_date
@@ -204,6 +208,14 @@ dict_query['startDate']=start_date
 dict_query['completionDate']=end_date
 dict_query['maxRecords']=500
 
+
+if options.relativeOrbitNumber != None:
+    dict_query['relativeOrbitNumber']=options.relativeOrbitNumber
+
+if options.orbitNumber != None:
+    dict_query['orbitNumber']=options.orbitNumber
+
+
 query="%s/%s/api/collections/%s/search.json?"%(config["serveur"], config["resto"],options.collection)+urllib.urlencode(dict_query)
 print query
 search_catalog='curl -k %s -o search.json "%s"'%(curl_proxy,query)
@@ -216,10 +228,10 @@ time.sleep(5)
 # Download
 #====================
 
-with open('search.json') as data_file:    
+with open('search.json') as data_file:
     data = json.load(data_file)
 
-for i in range(len(data["features"])):    
+for i in range(len(data["features"])):
     prod=data["features"][i]["properties"]["productIdentifier"]
     feature_id=data["features"][i]["id"]
 
@@ -237,7 +249,7 @@ for i in range(len(data["features"])):
         #download only if cloudCover below maxcloud
         if cloudCover <=options.maxcloud:
             os.system(get_product)
-        
+
 
             #check if binary product
 
@@ -253,11 +265,10 @@ for i in range(len(data["features"])):
             os.rename("%s"%tmpfile,"%s/%s.zip"%(options.write_dir,prod))
             print "product saved as : %s/%s.zip"%(options.write_dir,prod)
         else :
-            print "cloud cover too high : %s"%(cloudCover) 
+            print "cloud cover too high : %s"%(cloudCover)
     elif file_exists:
         print "%s already exists"%prod
     elif options.no_download:
         print "no download (-n) option was chosen"
 
 #os.remove('search.json')
-
