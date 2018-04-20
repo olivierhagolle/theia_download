@@ -30,6 +30,8 @@ if len(sys.argv) == 1:
     print "example 2 : python %s --lon 1 --lat 44 -a config.cfg -d 2015-12-01 -f 2015-12-31"%sys.argv[0]
     print "example 3 : python %s --lonmin 1 --lonmax 2 --latmin 43 --latmax 44 -a config.cfg -d 2015-12-01 -f 2015-12-31"%sys.argv[0]
     print "example 4 : python %s -l 'Toulouse' -a config.cfg -c SpotWorldHeritage -p SPOT4 -d 2005-12-01 -f 2006-12-31"%sys.argv[0]
+    print "example 5 : python %s -l 'France' -c VENUS -a config.cfg -d 2018-01-01"%sys.argv[0]
+    
     sys.exit(-1)
 else :
     usage = "usage: %prog [options] "
@@ -42,7 +44,7 @@ else :
     parser.add_option("-w","--write_dir", dest="write_dir", action="store",type="string",  \
             help="Path where the products should be downloaded",default='.')
     parser.add_option("-c","--collection", dest="collection", action="store", type="choice",  \
-            help="Collection within theia collections",choices=['Landsat','SpotWorldHeritage','SENTINEL2','Snow'],default='SENTINEL2')
+                      help="Collection within theia collections",choices=['Landsat','SpotWorldHeritage','SENTINEL2','Snow','VENUS'],default='SENTINEL2')
     parser.add_option("-n","--no_download", dest="no_download", action="store_true",  \
             help="Do not download products, just print curl command",default=False)
     parser.add_option("-d", "--start_date", dest="start_date", action="store", type="string", \
@@ -64,7 +66,7 @@ else :
     parser.add_option("-f","--end_date", dest="end_date", action="store", type="string", \
             help="end date, fmt('2015-12-23')",default=None)
     parser.add_option('-p', '--platform', type='choice', action='store', dest='platform',\
-                      choices=['LANDSAT5','LANDSAT7','LANDSAT8','SPOT1','SPOT2','SPOT3','SPOT4','SPOT5','SENTINEL2A','SENTINEL2B'],  help='Satellite',)
+                      choices=['LANDSAT5','LANDSAT7','LANDSAT8','SPOT1','SPOT2','SPOT3','SPOT4','SPOT5','SENTINEL2A','SENTINEL2B','VENUS'],  help='Satellite',)
     parser.add_option('-m', '--maxcloud', type='int', action='store', dest='maxcloud',\
                       default=101,  help='Maximum cloud cover (%)')
     parser.add_option('-o', '--orbitNumber', type='int', action='store', dest='orbitNumber',\
