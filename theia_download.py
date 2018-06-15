@@ -233,44 +233,50 @@ time.sleep(5)
 with open('search.json') as data_file:
     data = json.load(data_file)
 
-for i in range(len(data["features"])):
-    prod=data["features"][i]["properties"]["productIdentifier"]
-    feature_id=data["features"][i]["id"]
+try :    
+    for i in range(len(data["features"])):
+        prod=data["features"][i]["properties"]["productIdentifier"]
+        feature_id=data["features"][i]["id"]
+        cloudCover=int(data["features"][i]["properties"]["cloudCover"])
+        acqDate=data["features"][i]["properties"]["startDate"]
+        prodDate=data["features"][i]["properties"]["productionDate"]
+        pubDate=data["features"][i]["properties"]["published"]
 
-    cloudCover=int(data["features"][i]["properties"]["cloudCover"])
-    print prod,feature_id
-    print "cloudCover:",cloudCover
+        print prod,feature_id
+        print "cloudCover:",cloudCover
+        print "acq date",acqDate[0:14],"prod date",prodDate[0:14],"pub date",pubDate[0:14]
 
-    if options.write_dir==None :
-        options.write_dir=os.getcwd()
-    file_exists=os.path.exists("%s/%s.zip"%(options.write_dir,prod))
-    tmpfile="%s/%s.tmp"%(options.write_dir,prod)
-    get_product='curl %s -o %s -k -H "Authorization: Bearer %s" %s/%s/collections/%s/%s/download/?issuerId=theia'%(curl_proxy,tmpfile,token,config["serveur"], config["resto"],options.collection,feature_id)
-#    print get_product
-    if not(options.no_download) and not(file_exists):
-        #download only if cloudCover below maxcloud
-        if cloudCover <=options.maxcloud:
-            os.system(get_product)
+        if options.write_dir==None :
+            options.write_dir=os.getcwd()
+        file_exists=os.path.exists("%s/%s.zip"%(options.write_dir,prod))
+        tmpfile="%s/%s.tmp"%(options.write_dir,prod)
+        get_product='curl %s -o %s -k -H "Authorization: Bearer %s" %s/%s/collections/%s/%s/download/?issuerId=theia'%(curl_proxy,tmpfile,token,config["serveur"], config["resto"],options.collection,feature_id)
+    #    print get_product
+        if not(options.no_download) and not(file_exists):
+            #download only if cloudCover below maxcloud
+            if cloudCover <=options.maxcloud:
+                os.system(get_product)
 
 
-            #check if binary product
+                #check if binary product
 
-            with open(tmpfile) as f_tmp:
-                try:
-                    tmp_data=json.load(f_tmp)
-                    print "Result is a text file"
-                    print tmp_data
-                    sys.exit(-1)
-                except ValueError:
-                    pass
+                with open(tmpfile) as f_tmp:
+                    try:
+                        tmp_data=json.load(f_tmp)
+                        print "Result is a text file"
+                        print tmp_data
+                        sys.exit(-1)
+                    except ValueError:
+                        pass
 
-            os.rename("%s"%tmpfile,"%s/%s.zip"%(options.write_dir,prod))
-            print "product saved as : %s/%s.zip"%(options.write_dir,prod)
-        else :
-            print "cloud cover too high : %s"%(cloudCover)
-    elif file_exists:
-        print "%s already exists"%prod
-    elif options.no_download:
-        print "no download (-n) option was chosen"
+                os.rename("%s"%tmpfile,"%s/%s.zip"%(options.write_dir,prod))
+                print "product saved as : %s/%s.zip"%(options.write_dir,prod)
+            else :
+                print "cloud cover too high : %s"%(cloudCover)
+        elif file_exists:
+            print "%s already exists"%prod
+        elif options.no_download:
+            print "no download (-n) option was chosen"
 
-#os.remove('search.json')
+except KeyError:
+    print ">>>no product corresponds to selection criteria"
