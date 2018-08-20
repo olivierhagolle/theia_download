@@ -26,11 +26,12 @@ if len(sys.argv) == 1:
     print '      '+sys.argv[0]+' [options]'
     print "     Aide : ", prog, " --help"
     print "        ou : ", prog, " -h"
-    print "example 1 : python %s -l 'Toulouse' -a config.cfg -d 2015-12-01 -f 2015-12-31"%sys.argv[0]
-    print "example 2 : python %s --lon 1 --lat 44 -a config.cfg -d 2015-12-01 -f 2015-12-31"%sys.argv[0]
-    print "example 3 : python %s --lonmin 1 --lonmax 2 --latmin 43 --latmax 44 -a config.cfg -d 2015-12-01 -f 2015-12-31"%sys.argv[0]
-    print "example 4 : python %s -l 'Toulouse' -a config.cfg -c SpotWorldHeritage -p SPOT4 -d 2005-12-01 -f 2006-12-31"%sys.argv[0]
-    print "example 5 : python %s -l 'France' -c VENUS -a config.cfg -d 2018-01-01"%sys.argv[0]
+    print "example 1 : python %s -l 'Toulouse' -a config.cfg -d 2018-07-01 -f 2018-07-31"%sys.argv[0]
+    print "example 2 : python %s -l 'Toulouse' -a config.cfg -d 2018-07-01 -f 2018-07-31 --level LEVEL3A"%sys.argv[0]
+    print "example 3 : python %s --lon 1 --lat 44 -a config.cfg -d 2015-12-01 -f 2015-12-31"%sys.argv[0]
+    print "example 4 : python %s --lonmin 1 --lonmax 2 --latmin 43 --latmax 44 -a config.cfg -d 2015-12-01 -f 2015-12-31"%sys.argv[0]
+    print "example 5 : python %s -l 'Toulouse' -a config.cfg -c SpotWorldHeritage -p SPOT4 -d 2005-12-01 -f 2006-12-31"%sys.argv[0]
+    print "example 6 : python %s -l 'France' -c VENUS -a config.cfg -d 2018-01-01"%sys.argv[0]
     
     sys.exit(-1)
 else :
@@ -73,6 +74,9 @@ else :
                       default=None, help='Orbit Number')
     parser.add_option('-r', '--relativeOrbitNumber', type='int', action='store', dest='relativeOrbitNumber',\
                       default=None, help='Relative Orbit Number')
+    parser.add_option( '--level', type='choice', action='store', dest='level',\
+                       choices=['LEVEL2A','LEVEL3A'],  help='product level for reflectance products',default='LEVEL2A')
+
 
     (options, args) = parser.parse_args()
 
@@ -210,6 +214,8 @@ dict_query['startDate']=start_date
 dict_query['completionDate']=end_date
 dict_query['maxRecords']=500
 
+if options.collection=="SENTINEL2":
+    dict_query['processingLevel']=options.level
 
 if options.relativeOrbitNumber != None:
     dict_query['relativeOrbitNumber']=options.relativeOrbitNumber
