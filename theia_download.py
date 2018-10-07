@@ -164,7 +164,7 @@ if config_error:
 #=====================
 curl_proxy = ""
 if "proxy" in config.keys():
-    curl_proxy = str("-x %s --proxy-user %s:%s" % (config["proxy"],config["login_proxy"],config["password_proxy"]))
+    curl_proxy = str('-x %s --proxy-user "%s:%s"' % (config["proxy"],config["login_proxy"],config["password_proxy"]))
 
 
 
@@ -196,6 +196,8 @@ with open('token.json') as data_file:
             sys.exit(-1)
     except :
         print "Authentification is probably wrong"
+        print "check password file"
+        print "password should only contain alpha-numerics"
         sys.exit(-1)
 os.remove('token.json')
 
