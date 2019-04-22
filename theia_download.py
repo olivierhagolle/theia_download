@@ -40,7 +40,7 @@ if len(sys.argv) == 1:
     print "example 5 : python %s -l 'Toulouse' -a config.cfg -c SpotWorldHeritage -p SPOT4 -d 2005-12-01 -f 2006-12-31" % sys.argv[
         0]
     print "example 6 : python %s -l 'France' -c VENUS -a config.cfg -d 2018-01-01" % sys.argv[0]
-
+    print "example 7 : python %s -l 'France' -c LANDSAT -a config.cfg -d 2018-01-01" % sys.argv[0]
     sys.exit(-1)
 else:
     usage = "usage: %prog [options] "
@@ -53,7 +53,7 @@ else:
     parser.add_option("-w", "--write_dir", dest="write_dir", action="store", type="string",
                       help="Path where the products should be downloaded", default='.')
     parser.add_option("-c", "--collection", dest="collection", action="store", type="choice",
-                      help="Collection within theia collections", choices=['Landsat', 'SpotWorldHeritage', 'LANDSAT8', 'SENTINEL2', 'Snow', 'VENUS'], default='SENTINEL2')
+                      help="Collection within theia collections", choices=['Landsat', 'SpotWorldHeritage', 'LANDSAT', 'SENTINEL2', 'Snow', 'VENUS'], default='SENTINEL2')
     parser.add_option("-n", "--no_download", dest="no_download", action="store_true",
                       help="Do not download products, just print curl command", default=False)
     parser.add_option("-d", "--start_date", dest="start_date", action="store", type="string",
@@ -83,8 +83,7 @@ else:
     parser.add_option('-r', '--relativeOrbitNumber', type='int', action='store', dest='relativeOrbitNumber',
                       default=None, help='Relative Orbit Number')
     parser.add_option('--level', type='choice', action='store', dest='level',
-                      choices=['LEVEL2A', 'LEVEL3A'],  help='product level for reflectance products', default='LEVEL2A')
-
+                      choices=['LEVEL1C', 'LEVEL2A', 'LEVEL3A'],  help='product level for reflectance products', default='LEVEL2A')
     (options, args) = parser.parse_args()
 
 if options.tile == None:
@@ -182,13 +181,14 @@ if "proxy" in config.keys():
 # or if you are downloading lots of products, it might be an issue
 # =============================================================
 
+print("Get theia single sign on token")
 get_token = 'curl -k -s -X POST %s --data-urlencode "ident=%s" --data-urlencode "pass=%s" %s/services/authenticate/>token.json' % (
     curl_proxy, config["login_theia"], config["password_theia"], config["serveur"])
 
 #print get_token
 
 os.system(get_token)
-
+print("Done")
 token = ""
 token_type = config["token_type"]
 with open('token.json') as data_file:
@@ -213,7 +213,6 @@ os.remove('token.json')
 # ====================
 # search catalogue
 # ====================
-
 if os.path.exists('search.json'):
     os.remove('search.json')
 
@@ -225,7 +224,8 @@ dict_query['startDate'] = start_date
 dict_query['completionDate'] = end_date
 dict_query['maxRecords'] = 500
 
-if options.collection == "SENTINEL2":
+
+if options.collection == "SENTINEL2" or options.collection == "VENUS":
     dict_query['processingLevel'] = options.level
 
 if options.relativeOrbitNumber != None:
@@ -268,9 +268,9 @@ try:
             options.write_dir = os.getcwd()
         file_exists = os.path.exists("%s/%s.zip" % (options.write_dir, prod))
         tmpfile = "%s/%s.tmp" % (options.write_dir, prod)
-        get_product = 'curl %s -o %s -k -H "Authorization: Bearer %s" %s/%s/collections/%s/%s/download/?issuerId=theia' % (
+        get_product = 'curl %s -o "%s" -k -H "Authorization: Bearer %s" %s/%s/collections/%s/%s/download/?issuerId=theia' % (
             curl_proxy, tmpfile, token, config["serveur"], config["resto"], options.collection, feature_id)
-    #    print get_product
+        print get_product
         if not(options.no_download) and not(file_exists):
             # download only if cloudCover below maxcloud
             if cloudCover <= options.maxcloud:
