@@ -6,7 +6,7 @@ import os
 import os.path
 import optparse
 import sys
-from datetime import date
+from datetime import date, datetime
 import urllib
 
 ###########################################################################
@@ -20,6 +20,24 @@ class OptionParser (optparse.OptionParser):
         # Assumes the option's 'default' is set to None!
         if getattr(self.values, option.dest) is None:
             self.error("%s option not supplied" % option)
+
+###########################################################################
+
+
+def checkDate(date_string):
+
+    d = date_string.split('-')
+    try:
+        year = d[0]
+        month = d[1]
+        day = d[2]
+        dd = datetime(int(year), int(month), int(day))
+    except ValueError:
+        print "Please use a valid date"
+        sys.exit(-1)
+    except IndexError:
+        print "Please use yyyy-mm-dd format for dates"
+        sys.exit(-1)
 
 ###########################################################################
 
@@ -134,8 +152,10 @@ elif geom == 'tile':
 
 if options.start_date != None:
     start_date = options.start_date
+    checkDate(start_date)
     if options.end_date != None:
         end_date = options.end_date
+        checkDate(end_date)
     else:
         end_date = date.today().isoformat()
 
