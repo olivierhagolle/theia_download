@@ -133,10 +133,12 @@ if options.tile == None:
             sys.exit(-1)
 else:
     if (options.tile.startswith('T') and len(options.tile) == 6):
-        location = options.tile
+        tile = options.tile
         geom = 'tile'
+
     elif (not(options.tile.startswith('T')) and len(options.tile) == 5):
-        location = 'T'+options.tile
+        tile = 'T'+options.tile
+        geom = 'tile'
     else:
         print 'tile number much gave this format : T31TFJ'
 
@@ -153,8 +155,8 @@ elif geom == 'location':
     query_geom = "q=%s" % options.location
     dict_query = {'q': options.location}
 elif geom == 'tile':
-    query_geom = 'location=%s' % options.tile
-    dict_query = {'location': options.tile}
+    query_geom = 'location=%s' % tile
+    dict_query = {'location': tile}
 elif geom == 'site':
     query_geom = 'location=%s' % options.site
     dict_query = {'location': options.site}
@@ -215,7 +217,7 @@ print("Get theia single sign on token")
 get_token = 'curl -k -s -X POST %s --data-urlencode "ident=%s" --data-urlencode "pass=%s" %s/services/authenticate/>token.json' % (
     curl_proxy, config["login_theia"], config["password_theia"], config["serveur"])
 
-#print get_token
+# print get_token
 
 os.system(get_token)
 print("Done")
