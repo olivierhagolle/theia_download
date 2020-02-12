@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 # -*- coding: iso-8859-1 -*-
+import glob
 import json
 import time
 import os
@@ -7,8 +8,11 @@ import os.path
 import optparse
 import sys
 from datetime import date, datetime
-import urllib
-import glob
+if sys.version_info[0] == 2:
+    from urllib import urlencode
+elif sys.version_info[0] > 2:
+    from urllib.parse import urlencode
+
 
 ###########################################################################
 
@@ -34,10 +38,10 @@ def checkDate(date_string):
         day = d[2]
         dd = datetime(int(year), int(month), int(day))
     except ValueError:
-        print "Please use a valid date"
+        print("Please use a valid date")
         sys.exit(-1)
     except IndexError:
-        print "Please use yyyy-mm-dd format for dates"
+        print("Please use yyyy-mm-dd format for dates")
         sys.exit(-1)
 
 ###########################################################################
@@ -48,19 +52,22 @@ def checkDate(date_string):
 # ==================
 if len(sys.argv) == 1:
     prog = os.path.basename(sys.argv[0])
-    print '      '+sys.argv[0]+' [options]'
-    print "     Aide : ", prog, " --help"
-    print "        ou : ", prog, " -h"
-    print "example 1 : python %s -t 'T31TFJ' -a config.cfg -d 2018-07-01 -f 2018-07-31" % sys.argv[0]
-    print "example 2 : python %s -l 'Toulouse' -a config.cfg -d 2018-07-01 -f 2018-07-31 --level LEVEL3A" % sys.argv[0]
-    print "example 3 : python %s --lon 1 --lat 44 -a config.cfg -d 2015-12-01 -f 2015-12-31" % sys.argv[0]
-    print "example 4 : python %s --lonmin 1 --lonmax 2 --latmin 43 --latmax 44 -a config.cfg -d 2015-12-01 -f 2015-12-31" % sys.argv[
-        0]
-    print "example 5 : python %s -l 'Toulouse' -a config.cfg -c SpotWorldHeritage -p SPOT4 -d 2005-12-01 -f 2006-12-31" % sys.argv[
-        0]
-    print "example 6 : python %s -l 'France' -c VENUS -a config.cfg -d 2018-01-01" % sys.argv[0]
-    print "example 7 : python %s -s 'KHUMBU' -c VENUS -a config.cfg -d 2018-01-01" % sys.argv[0]
-    print "example 8 : python %s -l 'France' -c LANDSAT -a config.cfg -d 2018-01-01" % sys.argv[0]
+    print('      '+sys.argv[0]+' [options]')
+    print("     Aide : ", prog, " --help")
+    print("        ou : ", prog, " -h")
+    print("example 1 : python %s -t 'T31TFJ' -a config.cfg -d 2018-07-01 -f 2018-07-31" %
+          sys.argv[0])
+    print("example 2 : python %s -l 'Toulouse' -a config.cfg -d 2018-07-01 -f 2018-07-31 --level LEVEL3A" %
+          sys.argv[0])
+    print("example 3 : python %s --lon 1 --lat 44 -a config.cfg -d 2015-12-01 -f 2015-12-31" %
+          sys.argv[0])
+    print("example 4 : python %s --lonmin 1 --lonmax 2 --latmin 43 --latmax 44 -a config.cfg -d 2015-12-01 -f 2015-12-31" % sys.argv[
+        0])
+    print("example 5 : python %s -l 'Toulouse' -a config.cfg -c SpotWorldHeritage -p SPOT4 -d 2005-12-01 -f 2006-12-31" % sys.argv[
+        0])
+    print("example 6 : python %s -l 'France' -c VENUS -a config.cfg -d 2018-01-01" % sys.argv[0])
+    print("example 7 : python %s -s 'KHUMBU' -c VENUS -a config.cfg -d 2018-01-01" % sys.argv[0])
+    print("example 8 : python %s -l 'France' -c LANDSAT -a config.cfg -d 2018-01-01" % sys.argv[0])
     sys.exit(-1)
 else:
     usage = "usage: %prog [options] "
@@ -112,7 +119,7 @@ if options.tile == None:
     if options.location == None and options.site == None:
         if options.lat == None or options.lon == None:
             if options.latmin == None or options.lonmin == None or options.latmax == None or options.lonmax == None:
-                print "provide at least a point or  rectangle"
+                print("provide at least a point or  rectangle")
                 sys.exit(-1)
             else:
                 geom = 'rectangle'
@@ -120,7 +127,7 @@ if options.tile == None:
             if options.latmin == None and options.lonmin == None and options.latmax == None and options.lonmax == None:
                 geom = 'point'
             else:
-                print "please choose between point and rectangle, but not both"
+                print("please choose between point and rectangle, but not both")
                 sys.exit(-1)
     else:
         if options.latmin == None and options.lonmin == None and options.latmax == None and options.lonmax == None and options.lat == None or options.lon == None:
@@ -129,7 +136,7 @@ if options.tile == None:
             elif options.site != None:
                 geom = 'site'
         else:
-            print "please choose location/site or coordinates, but not both"
+            print("please choose location/site or coordinates, but not both")
             sys.exit(-1)
 else:
     if (options.tile.startswith('T') and len(options.tile) == 6):
@@ -140,7 +147,7 @@ else:
         tile = 'T'+options.tile
         geom = 'tile'
     else:
-        print 'tile number much gave this format : T31TFJ'
+        print('tile number much gave this format : T31TFJ')
 
 if geom == 'point':
     query_geom = 'lat=%f\&lon=%f' % (options.lat, options.lon)
@@ -175,26 +182,24 @@ if options.start_date != None:
 # ====================
 # read config
 # ====================
-try:
-    config = {}
-    f = file(options.alternative_config)
-    for line in f.readlines():
-        spliteline = line.split('=', 1)
-        if len(spliteline) == 2:
-            config[spliteline[0].strip()] = spliteline[1].strip()
-except:
-    print "error with config file opening or parsing"
-    sys.exit(-2)
+
+config = {}
+f = open(options.alternative_config)
+for line in f.readlines():
+    spliteline = line.split('=', 1)
+    if len(spliteline) == 2:
+        config[spliteline[0].strip()] = spliteline[1].strip()
+
 
 config_error = False
 cheking_keys = ["serveur", "resto", "login_theia", "password_theia", "token_type"]
-if "proxy" in config.keys():
+if "proxy" in list(config.keys()):
     cheking_keys.extend(["login_proxy", "password_proxy"])
 
 for key_name in cheking_keys:
-    if key_name not in config.keys():
+    if key_name not in list(config.keys()):
         config_error = True
-        print str("error with config file, missing key : %s" % key_name)
+        print(str("error with config file, missing key : %s" % key_name))
 if config_error:
     sys.exit(-2)
 
@@ -202,7 +207,7 @@ if config_error:
 # proxy
 # =====================
 curl_proxy = ""
-if "proxy" in config.keys():
+if "proxy" in list(config.keys()):
     curl_proxy = str('-x %s --proxy-user "%s:%s"' %
                      (config["proxy"], config["login_proxy"], config["password_proxy"]))
 
@@ -233,12 +238,12 @@ with open('token.json') as data_file:
             token = data_file.readline()
 
         else:
-            print str("error with config file, unknown token_type : %s" % token_type)
+            print(str("error with config file, unknown token_type : %s" % token_type))
             sys.exit(-1)
     except:
-        print "Authentification is probably wrong"
-        print "check password file"
-        print "password should only contain alpha-numerics"
+        print("Authentification is probably wrong")
+        print("check password file")
+        print("password should only contain alpha-numerics")
         sys.exit(-1)
 os.remove('token.json')
 
@@ -268,10 +273,10 @@ if options.orbitNumber != None:
 
 
 query = "%s/%s/api/collections/%s/search.json?" % (
-    config["serveur"], config["resto"], options.collection)+urllib.urlencode(dict_query)
-print query
+    config["serveur"], config["resto"], options.collection)+urlencode(dict_query)
+print(query)
 search_catalog = 'curl -k %s -o search.json "%s"' % (curl_proxy, query)
-print search_catalog
+print(search_catalog)
 os.system(search_catalog)
 time.sleep(5)
 
@@ -292,15 +297,15 @@ try:
         prodDate = data["features"][i]["properties"]["productionDate"]
         pubDate = data["features"][i]["properties"]["published"]
         print ('------------------------------------------------------')
-        print prod, feature_id
-        print "cloudCover:", cloudCover
-        print "acq date", acqDate[0:14], "prod date", prodDate[0:14], "pub date", pubDate[0:14]
+        print(prod, feature_id)
+        print("cloudCover:", cloudCover)
+        print("acq date", acqDate[0:14], "prod date", prodDate[0:14], "pub date", pubDate[0:14])
 
         if options.write_dir == None:
             options.write_dir = os.getcwd()
         file_exists = os.path.exists("%s/%s.zip" % (options.write_dir, prod))
         rac_file = '_'.join(prod.split('_')[0: -1])
-        print(">>>>>>>", rac_file)
+        print((">>>>>>>", rac_file))
         fic_unzip = glob.glob("%s/%s*" % (options.write_dir, rac_file))
         if len(fic_unzip) > 0:
             unzip_exists = True
@@ -309,7 +314,7 @@ try:
         tmpfile = "%s/%s.tmp" % (options.write_dir, prod)
         get_product = 'curl %s -o "%s" -k -H "Authorization: Bearer %s" %s/%s/collections/%s/%s/download/?issuerId=theia' % (
             curl_proxy, tmpfile, token, config["serveur"], config["resto"], options.collection, feature_id)
-        print get_product
+        print(get_product)
         if not(options.no_download) and not(file_exists) and not(unzip_exists):
             # download only if cloudCover below maxcloud
             if cloudCover <= options.maxcloud:
@@ -320,20 +325,20 @@ try:
                 with open(tmpfile) as f_tmp:
                     try:
                         tmp_data = json.load(f_tmp)
-                        print "Result is a text file"
-                        print tmp_data
+                        print("Result is a text file")
+                        print(tmp_data)
                         sys.exit(-1)
                     except ValueError:
                         pass
 
                 os.rename("%s" % tmpfile, "%s/%s.zip" % (options.write_dir, prod))
-                print "product saved as : %s/%s.zip" % (options.write_dir, prod)
+                print("product saved as : %s/%s.zip" % (options.write_dir, prod))
             else:
-                print "cloud cover too high : %s" % (cloudCover)
+                print("cloud cover too high : %s" % (cloudCover))
         elif file_exists:
-            print "%s already exists" % prod
+            print("%s already exists" % prod)
         elif options.no_download:
-            print "no download (-n) option was chosen"
+            print("no download (-n) option was chosen")
 
 except KeyError:
-    print ">>>no product corresponds to selection criteria"
+    print(">>>no product corresponds to selection criteria")
