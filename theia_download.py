@@ -51,7 +51,7 @@ if len(sys.argv) == 1:
     print '      '+sys.argv[0]+' [options]'
     print "     Aide : ", prog, " --help"
     print "        ou : ", prog, " -h"
-    print "example 1 : python %s -l 'Toulouse' -a config.cfg -d 2018-07-01 -f 2018-07-31" % sys.argv[0]
+    print "example 1 : python %s -t 'T31TFJ' -a config.cfg -d 2018-07-01 -f 2018-07-31" % sys.argv[0]
     print "example 2 : python %s -l 'Toulouse' -a config.cfg -d 2018-07-01 -f 2018-07-31 --level LEVEL3A" % sys.argv[0]
     print "example 3 : python %s --lon 1 --lat 44 -a config.cfg -d 2015-12-01 -f 2015-12-31" % sys.argv[0]
     print "example 4 : python %s --lonmin 1 --lonmax 2 --latmin 43 --latmax 44 -a config.cfg -d 2015-12-01 -f 2015-12-31" % sys.argv[
