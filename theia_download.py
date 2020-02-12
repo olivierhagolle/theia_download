@@ -8,6 +8,7 @@ import optparse
 import sys
 from datetime import date, datetime
 import urllib
+import glob
 
 ###########################################################################
 
@@ -58,7 +59,8 @@ if len(sys.argv) == 1:
     print "example 5 : python %s -l 'Toulouse' -a config.cfg -c SpotWorldHeritage -p SPOT4 -d 2005-12-01 -f 2006-12-31" % sys.argv[
         0]
     print "example 6 : python %s -l 'France' -c VENUS -a config.cfg -d 2018-01-01" % sys.argv[0]
-    print "example 7 : python %s -l 'France' -c LANDSAT -a config.cfg -d 2018-01-01" % sys.argv[0]
+    print "example 7 : python %s -s 'KHUMBU' -c VENUS -a config.cfg -d 2018-01-01" % sys.argv[0]
+    print "example 8 : python %s -l 'France' -c LANDSAT -a config.cfg -d 2018-01-01" % sys.argv[0]
     sys.exit(-1)
 else:
     usage = "usage: %prog [options] "
@@ -66,6 +68,8 @@ else:
 
     parser.add_option("-l", "--location", dest="location", action="store", type="string",
                       help="town name (pick one which is not too frequent to avoid confusions)", default=None)
+    parser.add_option("-s", "--site", dest="site", action="store", type="string",
+                      help="Venµs Site name", default=None)
     parser.add_option("-a", "--alternative_config", dest="alternative_config", action="store", type="string",
                       help="alternative configuration file", default=None)
     parser.add_option("-w", "--write_dir", dest="write_dir", action="store", type="string",
@@ -105,7 +109,7 @@ else:
     (options, args) = parser.parse_args()
 
 if options.tile == None:
-    if options.location == None:
+    if options.location == None and options.site == None:
         if options.lat == None or options.lon == None:
             if options.latmin == None or options.lonmin == None or options.latmax == None or options.lonmax == None:
                 print "provide at least a point or  rectangle"
@@ -118,12 +122,14 @@ if options.tile == None:
             else:
                 print "please choose between point and rectangle, but not both"
                 sys.exit(-1)
-
     else:
         if options.latmin == None and options.lonmin == None and options.latmax == None and options.lonmax == None and options.lat == None or options.lon == None:
-            geom = 'location'
+            if options.location != None:
+                geom = 'location'
+            elif options.site != None:
+                geom = 'site'
         else:
-            print "please choose location and coordinates, but not both"
+            print "please choose location/site or coordinates, but not both"
             sys.exit(-1)
 else:
     if (options.tile.startswith('T') and len(options.tile) == 6):
@@ -149,6 +155,10 @@ elif geom == 'location':
 elif geom == 'tile':
     query_geom = 'location=%s' % options.tile
     dict_query = {'location': options.tile}
+elif geom == 'site':
+    query_geom = 'location=%s' % options.site
+    dict_query = {'location': options.site}
+
 
 if options.start_date != None:
     start_date = options.start_date
@@ -279,7 +289,7 @@ try:
         acqDate = data["features"][i]["properties"]["startDate"]
         prodDate = data["features"][i]["properties"]["productionDate"]
         pubDate = data["features"][i]["properties"]["published"]
-
+        print ('------------------------------------------------------')
         print prod, feature_id
         print "cloudCover:", cloudCover
         print "acq date", acqDate[0:14], "prod date", prodDate[0:14], "pub date", pubDate[0:14]
@@ -287,11 +297,18 @@ try:
         if options.write_dir == None:
             options.write_dir = os.getcwd()
         file_exists = os.path.exists("%s/%s.zip" % (options.write_dir, prod))
+        rac_file = '_'.join(prod.split('_')[0: -1])
+        print(">>>>>>>", rac_file)
+        fic_unzip = glob.glob("%s/%s*" % (options.write_dir, rac_file))
+        if len(fic_unzip) > 0:
+            unzip_exists = True
+        else:
+            unzip_exists = False
         tmpfile = "%s/%s.tmp" % (options.write_dir, prod)
         get_product = 'curl %s -o "%s" -k -H "Authorization: Bearer %s" %s/%s/collections/%s/%s/download/?issuerId=theia' % (
             curl_proxy, tmpfile, token, config["serveur"], config["resto"], options.collection, feature_id)
         print get_product
-        if not(options.no_download) and not(file_exists):
+        if not(options.no_download) and not(file_exists) and not(unzip_exists):
             # download only if cloudCover below maxcloud
             if cloudCover <= options.maxcloud:
                 os.system(get_product)
