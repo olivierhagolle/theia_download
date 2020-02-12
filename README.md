@@ -25,9 +25,14 @@ If you have an account at theia, you may download products using command lines l
 
  which downloads the LANDSAT-8 products, with the old MUSCATE format above Toulouse, acquired in September 2016.
 
-- `python ./theia_download.py -l 'ALSACE' -c VENUS -a config_theia.cfg -d 2019-01-01 -f 2019-02-01`
+- `python ./theia_download.py -l 'France' -c VENUS -a config_theia.cfg -d 2019-01-01 -f 2019-02-01`
 
- which downloads the VENUS products above ALSACE site, acquired in January 2019.
+ which downloads the VENUS products from all sites in France, acquired in January 2019.
+ 
+ - `python ./theia_download.py -s 'KHUMBU' -c VENUS -a config_theia.cfg -d 2019-01-01 -f 2019-02-01`
+
+ which downloads the VENUS products above KHUMBU site, acquired in January 2019.
+
  
 - `python ./theia_download.py -l 'Toulouse' -c SpotWorldHeritage -a config_theia.cfg -d 2006-01-01 -f 2007-01-01`
 
