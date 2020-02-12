@@ -183,13 +183,17 @@ if options.start_date != None:
 # read config
 # ====================
 
-config = {}
-f = open(options.alternative_config)
-for line in f.readlines():
-    spliteline = line.split('=', 1)
-    if len(spliteline) == 2:
-        config[spliteline[0].strip()] = spliteline[1].strip()
-
+try:
+    config = {}
+    f = open(options.alternative_config)
+    for line in f.readlines():
+        spliteline = line.split('=', 1)
+        if len(spliteline) == 2:
+            config[spliteline[0].strip()] = spliteline[1].strip()
+except IOError as e:
+    print("error with config file opening or parsing")
+    print(e)
+    sys.exit(-2)
 
 config_error = False
 cheking_keys = ["serveur", "resto", "login_theia", "password_theia", "token_type"]
