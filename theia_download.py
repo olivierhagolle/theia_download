@@ -82,7 +82,7 @@ else:
     parser.add_option("-w", "--write_dir", dest="write_dir", action="store", type="string",
                       help="Path where the products should be downloaded", default='.')
     parser.add_option("-c", "--collection", dest="collection", action="store", type="choice",
-                      help="Collection within theia collections", choices=['Landsat', 'SpotWorldHeritage', 'LANDSAT', 'SENTINEL2', 'Snow', 'VENUS'], default='SENTINEL2')
+                      help="Collection within theia collections", choices=['Landsat', 'Landsat57', 'SpotWorldHeritage', 'SWH1', 'LANDSAT', 'SENTINEL2', 'Snow', 'VENUS'], default='SENTINEL2')
     parser.add_option("-n", "--no_download", dest="no_download", action="store_true",
                       help="Do not download products, just print curl command", default=False)
     parser.add_option("-d", "--start_date", dest="start_date", action="store", type="string",
@@ -296,7 +296,11 @@ try:
     for i in range(len(data["features"])):
         prod = data["features"][i]["properties"]["productIdentifier"]
         feature_id = data["features"][i]["id"]
-        cloudCover = int(data["features"][i]["properties"]["cloudCover"])
+        cloudtemp = data["features"][i]["properties"]["cloudCover"]
+        if cloudtemp != None:
+            cloudCover = int(cloudtemp)
+        else:
+            cloudCover = 0
         acqDate = data["features"][i]["properties"]["startDate"]
         prodDate = data["features"][i]["properties"]["productionDate"]
         pubDate = data["features"][i]["properties"]["published"]
