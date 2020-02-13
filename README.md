@@ -33,10 +33,12 @@ If you have an account at theia, you may download products using command lines l
 
  which downloads the VENUS products above KHUMBU site, acquired in January 2019.
 
- 
-- `python ./theia_download.py -l 'Toulouse' -c SpotWorldHeritage -a config_theia.cfg -d 2006-01-01 -f 2007-01-01`
+- `python ./theia_download.py -l 'Yaounde' -c SPOTWORLDHERITAGE -a config_theia.cfg -d 2012-01-01 -f 2013-01-01`
 
- which downloads the SPOT World Heritage products above Toulouse, acquired in 2006.
+ 
+ - `python ./theia_download.py -l 'Toulouse' -c SWH1 -a config_theia.cfg -d 2006-01-01 -f 2007-01-01`
+
+ which downloads the SPOT World Heritage products old format above Toulouse, acquired in 2006.
 
  - `python ./theia_download.py -l 'Foix' -c Snow -a config_theia.cfg -d 2016-11-01 -f 2016-12-01`
 
