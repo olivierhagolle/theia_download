@@ -60,9 +60,9 @@ If you have an account at theia, you may download products using command lines l
 
  which downloads the LANDSAT 8 products in latitude, longitude box around Toulouse, acquired in November 2015.
 
-- `python theia_download.py -l 'Toulouse' -a config_landsat.cfg -c SpotWorldHeritage -p SPOT4 -d 2005-11-01 -f 2006-12-01`
+- `python theia_download.py -l 'Toulouse' -a config_landsat.cfg -c SPOTWORLDHERITAGE -p SPOT4 -d 2005-11-01 -f 2006-12-01`
 
-which downloads the SpotWorldHeritage products acquired by SPOT5 in 2005-2006
+which downloads the SPOTWORLDHERITAGE products acquired by SPOT5 in 2005-2006
  
 - `python ./theia_download.py -c SENTINEL2 -t T31TCJ -r 51 d 2017-01-01 -f 2018-01-01`
 
@@ -75,5 +75,5 @@ The config file  config_landsat.cfg or  config_landsat.cfg  must contain your em
 
 If you need to go through a proxy, and if you have not configured your proxy variable (`export http_proxy=http://moi:secret@proxy.mycompany.fr:8050`), you may also use one of the files like config_theia_proxy.cfg or config_landsat_proxy.cfg and add your passwords in them.
 
-The program first fetches a token using your email address and password, and then uses it to download the products. As the token is only valid for two hours, it is advised to request only a reasonable number of products. It is necessary to make a first download from the site manually in order to validate your accound and the licence in the case of SpotWorldHeritage.
+The program first fetches a token using your email address and password, and then uses it to download the products. As the token is only valid for two hours, it is advised to request only a reasonable number of products. It is necessary to make a first download from the site manually in order to validate your accound and the licence in the case of SPOTWORLDHERITAGE.
 
