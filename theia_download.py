@@ -38,7 +38,7 @@ if len(sys.argv) == 1:
     print("example 2 : python %s --lon 1 --lat 44 -a config.cfg -d 2015-12-01 -f 2015-12-31" % sys.argv[0])
     print("example 3 : python %s --lonmin 1 --lonmax 2 --latmin 43 --latmax 44 -a config.cfg -d 2015-12-01 -f 2015-12-31" %
           sys.argv[0])
-    print("example 4 : python %s -l 'Toulouse' -a config.cfg -c SpotWorldHeritage -p SPOT4 -d 2005-12-01 -f 2006-12-31" %
+    print("example 4 : python %s -l 'Toulouse' -a config.cfg -c SPOTWORLDHERITAGE -p SPOT4 -d 2005-12-01 -f 2006-12-31" %
           sys.argv[0])
     print("example 5 : python %s -l 'France' -c VENUS -a config.cfg -d 2018-01-01" % sys.argv[0])
 
@@ -54,7 +54,7 @@ else:
     parser.add_option("-w", "--write_dir", dest="write_dir", action="store", type="string",
                       help="Path where the products should be downloaded", default='.')
     parser.add_option("-c", "--collection", dest="collection", action="store", type="choice",
-                      help="Collection within theia collections", choices=['Landsat', 'SpotWorldHeritage', 'SENTINEL2', 'Snow', 'VENUS'], default='SENTINEL2')
+                      help="Collection within theia collections", choices=['Landsat', 'SPOTWORLDHERITAGE', 'SENTINEL2', 'Snow', 'VENUS'], default='SENTINEL2')
     parser.add_option("-n", "--no_download", dest="no_download", action="store_true",
                       help="Do not download products, just print curl command", default=False)
     parser.add_option("-d", "--start_date", dest="start_date", action="store", type="string",
