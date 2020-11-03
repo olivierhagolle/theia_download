@@ -13,6 +13,7 @@ if sys.version_info[0] == 2:
 elif sys.version_info[0] > 2:
     from urllib.parse import urlencode
 
+BASE_CURL = "curl -k -H 'User-Agent: cURL'"
 
 ###########################################################################
 
@@ -76,7 +77,7 @@ else:
     parser.add_option("-l", "--location", dest="location", action="store", type="string",
                       help="town name (pick one which is not too frequent to avoid confusions)", default=None)
     parser.add_option("-s", "--site", dest="site", action="store", type="string",
-                      help="Venµs Site name", default=None)
+                      help="VenÂµs Site name", default=None)
     parser.add_option("-a", "--alternative_config", dest="alternative_config", action="store", type="string",
                       help="alternative configuration file", default=None)
     parser.add_option("-w", "--write_dir", dest="write_dir", action="store", type="string",
@@ -223,7 +224,7 @@ if "proxy" in list(config.keys()):
 # =============================================================
 
 print("Get theia single sign on token")
-get_token = 'curl -k -s -X POST %s --data-urlencode "ident=%s" --data-urlencode "pass=%s" %s/services/authenticate/>token.json' % (
+get_token = BASE_CURL + ' -s -X POST %s --data-urlencode "ident=%s" --data-urlencode "pass=%s" %s/services/authenticate/>token.json' % (
     curl_proxy, config["login_theia"], config["password_theia"], config["serveur"])
 
 # print get_token
@@ -279,7 +280,7 @@ if options.orbitNumber != None:
 query = "%s/%s/api/collections/%s/search.json?" % (
     config["serveur"], config["resto"], options.collection)+urlencode(dict_query)
 print(query)
-search_catalog = 'curl -k %s -o search.json "%s"' % (curl_proxy, query)
+search_catalog = BASE_CURL + ' %s -o search.json "%s"' % (curl_proxy, query)
 print(search_catalog)
 os.system(search_catalog)
 time.sleep(5)
@@ -320,7 +321,7 @@ try:
         else:
             unzip_exists = False
         tmpfile = "%s/%s.tmp" % (options.write_dir, prod)
-        get_product = 'curl %s -o "%s" -k -H "Authorization: Bearer %s" %s/%s/collections/%s/%s/download/?issuerId=theia' % (
+        get_product = BASE_CURL + ' %s -o "%s" -H "Authorization: Bearer %s" %s/%s/collections/%s/%s/download/?issuerId=theia' % (
             curl_proxy, tmpfile, token, config["serveur"], config["resto"], options.collection, feature_id)
         print(get_product)
         if not(options.no_download) and not(file_exists) and not(unzip_exists):
