@@ -80,5 +80,7 @@ The program first fetches a token using your email address and password, and the
 ## Alternatives
 
 The EODAG tool has an interface to download data from Theia, PEPS, and many others, and it is probably much more professional code. You might give it a try.
+
 https://eodag.readthedocs.io/en/latest/#
+
 https://github.com/CS-SI/eodag
