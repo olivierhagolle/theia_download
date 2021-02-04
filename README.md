@@ -77,3 +77,8 @@ If you need to go through a proxy, and if you have not configured your proxy var
 
 The program first fetches a token using your email address and password, and then uses it to download the products. As the token is only valid for two hours, it is advised to request only a reasonable number of products. It is necessary to make a first download from the site manually in order to validate your accound and the licence in the case of SPOTWORLDHERITAGE.
 
+## Alternatives
+
+The EODAG tool has an interface to download data from Theia, PEPS, and many others, and it is probably much more professional code. You might give it a try.
+https://eodag.readthedocs.io/en/latest/#
+https://github.com/CS-SI/eodag
