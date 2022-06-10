@@ -326,7 +326,8 @@ try:
         if not(options.no_download) and not(file_exists) and not(unzip_exists):
             # download only if cloudCover below maxcloud
             if cloudCover <= options.maxcloud:
-                os.system(get_product)
+                # Execution of get_product (curl execution), and store return code into ret variable:
+                ret = os.system(get_product)
 
                 # check if binary product
 
@@ -347,6 +348,12 @@ try:
             print("%s already exists" % prod)
         elif options.no_download:
             print("no download (-n) option was chosen")
-
+        if ret:
+            # If curl execution returned a non-zero return code (which was stored in ret variable), exit and return that code:
+            sys.exit(ret)
+        else:
+            sys.exit(0)
 except KeyError:
     print(">>>no product corresponds to selection criteria")
+    # Return a non-zero return code (although -1 may not be the most appropriate: to be adjusted):
+    sys.exit(-1)
