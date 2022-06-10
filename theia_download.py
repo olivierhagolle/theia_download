@@ -323,10 +323,11 @@ try:
         get_product = 'curl %s -o "%s" -k -H "Authorization: Bearer %s" %s/%s/collections/%s/%s/download/?issuerId=theia' % (
             curl_proxy, tmpfile, token, config["serveur"], config["resto"], options.collection, feature_id)
         print(get_product)
+        ret = 0
         if not(options.no_download) and not(file_exists) and not(unzip_exists):
             # download only if cloudCover below maxcloud
             if cloudCover <= options.maxcloud:
-                # Execution of get_product (curl execution), and store return code into ret variable:
+                # Execution of get_product (curl execution), and store return code into ret variable (previously initialized at 0):
                 ret = os.system(get_product)
 
                 # check if binary product
@@ -348,7 +349,7 @@ try:
             print("%s already exists" % prod)
         elif options.no_download:
             print("no download (-n) option was chosen")
-        if ret:
+        if ret != 0:
             # If curl execution returned a non-zero return code (which was stored in ret variable), exit and return that code:
             sys.exit(ret)
         else:
