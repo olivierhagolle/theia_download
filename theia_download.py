@@ -345,6 +345,8 @@ try:
                 print("product saved as : %s/%s.zip" % (options.write_dir, prod))
             else:
                 print("cloud cover too high : %s" % (cloudCover))
+        elif unzip_exists:
+            print("Unzipped %s already exists" % prod)
         elif file_exists:
             print("%s already exists" % prod)
         elif options.no_download:
