@@ -292,6 +292,8 @@ time.sleep(5)
 with open('search.json') as data_file:
     data = json.load(data_file)
 
+return_code_final = 0   # For use in a scripting environment, use a return code; it will be a sum of the return codes from all curl calls.
+
 try:
     for i in range(len(data["features"])):
         prod = data["features"][i]["properties"]["productIdentifier"]
@@ -323,12 +325,12 @@ try:
         get_product = 'curl %s -o "%s" -k -H "Authorization: Bearer %s" %s/%s/collections/%s/%s/download/?issuerId=theia' % (
             curl_proxy, tmpfile, token, config["serveur"], config["resto"], options.collection, feature_id)
         print(get_product)
-        ret = 0
+        return_code = 0
         if not(options.no_download) and not(file_exists) and not(unzip_exists):
             # download only if cloudCover below maxcloud
             if cloudCover <= options.maxcloud:
-                # Execution of get_product (curl execution), and store return code into ret variable (previously initialized at 0):
-                ret = os.system(get_product)
+                # Execution of get_product (curl execution), and store return code into return_code variable (previously initialized at 0):
+                return_code = os.system(get_product)
 
                 # check if binary product
 
@@ -351,12 +353,13 @@ try:
             print("%s already exists" % prod)
         elif options.no_download:
             print("no download (-n) option was chosen")
-        if ret != 0:
-            # If curl execution returned a non-zero return code (which was stored in ret variable), exit and return that code:
-            sys.exit(ret)
-        else:
-            sys.exit(0)
+        if return_code != 0:
+            # If curl execution returned a non-zero return code (which was stored in return_code variable), DO NOT exit and return that code, instead pile up that code upon final_return_code:
+            #sys.exit(return_code)
+            return_code_final += return_code
 except KeyError:
     print(">>>no product corresponds to selection criteria")
     # Return a non-zero return code (although -1 may not be the most appropriate: to be adjusted):
     sys.exit(-1)
+# Once all process is finished, returns an exit code: 0 if everything went well, a sum of all exit codes from curl calls otherwise:
+sys.exit(return_code_final)
