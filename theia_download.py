@@ -47,6 +47,49 @@ def checkDate(date_string):
 ###########################################################################
 
 
+# ============================================================
+# get a token to be allowed to bypass the authentification.
+# The token is only valid for two hours. If your connection is slow
+# or if you are downloading lots of products, it might be an issue
+# =============================================================
+
+def getToken(curl_proxy, config):
+
+    print("Get theia single sign on token")
+    get_token = 'curl -k -s -X POST %s --data-urlencode "ident=%s" --data-urlencode "pass=%s" %s/services/authenticate/>token.json' % (
+        curl_proxy, config["login_theia"], config["password_theia"], config["serveur"])
+
+    # print get_token
+
+    os.system(get_token)
+    print("Done")
+    token = ""
+    token_type = config["token_type"]
+    with open('token.json') as data_file:
+        try:
+            if token_type == "json":
+                token_json = json.load(data_file)
+                token = token_json["access_token"]
+
+            elif token_type == "text":
+                token = data_file.readline()
+
+            else:
+                print(str("error with config file, unknown token_type : %s" % token_type))
+                sys.exit(-1)
+        except:
+            print("Authentification is probably wrong")
+            print("check password file")
+            print("password should only contain alpha-numerics")
+            sys.exit(-1)
+    os.remove('token.json')
+
+    return token
+
+
+###########################################################################
+
+
 # ==================
 # parse command line
 # ==================
@@ -76,7 +119,7 @@ else:
     parser.add_option("-l", "--location", dest="location", action="store", type="string",
                       help="town name (pick one which is not too frequent to avoid confusions)", default=None)
     parser.add_option("-s", "--site", dest="site", action="store", type="string",
-                      help="Venµs Site name", default=None)
+                      help="VenÂµs Site name", default=None)
     parser.add_option("-a", "--alternative_config", dest="alternative_config", action="store", type="string",
                       help="alternative configuration file", default=None)
     parser.add_option("-w", "--write_dir", dest="write_dir", action="store", type="string",
@@ -216,41 +259,6 @@ if "proxy" in list(config.keys()):
                      (config["proxy"], config["login_proxy"], config["password_proxy"]))
 
 
-# ============================================================
-# get a token to be allowed to bypass the authentification.
-# The token is only valid for two hours. If your connection is slow
-# or if you are downloading lots of products, it might be an issue
-# =============================================================
-
-print("Get theia single sign on token")
-get_token = 'curl -k -s -X POST %s --data-urlencode "ident=%s" --data-urlencode "pass=%s" %s/services/authenticate/>token.json' % (
-    curl_proxy, config["login_theia"], config["password_theia"], config["serveur"])
-
-# print get_token
-
-os.system(get_token)
-print("Done")
-token = ""
-token_type = config["token_type"]
-with open('token.json') as data_file:
-    try:
-        if token_type == "json":
-            token_json = json.load(data_file)
-            token = token_json["access_token"]
-
-        elif token_type == "text":
-            token = data_file.readline()
-
-        else:
-            print(str("error with config file, unknown token_type : %s" % token_type))
-            sys.exit(-1)
-    except:
-        print("Authentification is probably wrong")
-        print("check password file")
-        print("password should only contain alpha-numerics")
-        sys.exit(-1)
-os.remove('token.json')
-
 # ====================
 # search catalogue
 # ====================
@@ -321,7 +329,7 @@ try:
             unzip_exists = False
         tmpfile = "%s/%s.tmp" % (options.write_dir, prod)
         get_product = 'curl %s -o "%s" -k -H "Authorization: Bearer %s" %s/%s/collections/%s/%s/download/?issuerId=theia' % (
-            curl_proxy, tmpfile, token, config["serveur"], config["resto"], options.collection, feature_id)
+            curl_proxy, tmpfile, getToken(curl_proxy, config), config["serveur"], config["resto"], options.collection, feature_id)
         print(get_product)
         if not(options.no_download) and not(file_exists) and not(unzip_exists):
             # download only if cloudCover below maxcloud
