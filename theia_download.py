@@ -68,6 +68,7 @@ if len(sys.argv) == 1:
     print("example 6 : python %s -l 'France' -c VENUS -a config.cfg -d 2018-01-01" % sys.argv[0])
     print("example 7 : python %s -s 'KHUMBU' -c VENUS -a config.cfg -d 2018-01-01" % sys.argv[0])
     print("example 8 : python %s -l 'France' -c LANDSAT -a config.cfg -d 2018-01-01" % sys.argv[0])
+    print("example 9 : python %s -t T31TGK -a config.cfg -c Snow -d 2015-01-01 --snow_level L3B-SNOW" % sys.argv[0])
     sys.exit(-1)
 else:
     usage = "usage: %prog [options] "
@@ -76,7 +77,7 @@ else:
     parser.add_option("-l", "--location", dest="location", action="store", type="string",
                       help="town name (pick one which is not too frequent to avoid confusions)", default=None)
     parser.add_option("-s", "--site", dest="site", action="store", type="string",
-                      help="Venµs Site name", default=None)
+                      help="VenÂµs Site name", default=None)
     parser.add_option("-a", "--alternative_config", dest="alternative_config", action="store", type="string",
                       help="alternative configuration file", default=None)
     parser.add_option("-w", "--write_dir", dest="write_dir", action="store", type="string",
@@ -113,6 +114,8 @@ else:
                       default=None, help='Relative Orbit Number')
     parser.add_option('--level', type='choice', action='store', dest='level',
                       choices=['LEVEL1C', 'LEVEL2A', 'LEVEL3A'],  help='product level for reflectance products', default='LEVEL2A')
+    parser.add_option('--snow_level', type='choice', action='store', dest='snow_level',
+                      choices=['L2B-SNOW', 'L3B-SNOW'],  help='product level for snow products', default='L2B-SNOW')
     (options, args) = parser.parse_args()
 
 if options.tile == None:
@@ -268,6 +271,9 @@ dict_query['maxRecords'] = 500
 
 if options.collection == "SENTINEL2" or options.collection == "VENUS" or options.collection == "VENUSVM05":
     dict_query['processingLevel'] = options.level
+
+if options.collection == "Snow":
+    dict_query['processingLevel'] = options.snow_level
 
 if options.relativeOrbitNumber != None:
     dict_query['relativeOrbitNumber'] = options.relativeOrbitNumber
