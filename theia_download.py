@@ -82,7 +82,7 @@ else:
     parser.add_option("-w", "--write_dir", dest="write_dir", action="store", type="string",
                       help="Path where the products should be downloaded", default='.')
     parser.add_option("-c", "--collection", dest="collection", action="store", type="choice",
-                      help="Collection within theia collections", choices=['Landsat', 'Landsat57', 'SPOTWORLDHERITAGE', 'SWH1', 'LANDSAT', 'SENTINEL2', 'Snow', 'VENUS'], default='SENTINEL2')
+                      help="Collection within theia collections", choices=['Landsat', 'Landsat57', 'SPOTWORLDHERITAGE', 'SWH1', 'LANDSAT', 'SENTINEL2', 'Snow', 'VENUS', 'VENUSVM05'], default='SENTINEL2')
     parser.add_option("-n", "--no_download", dest="no_download", action="store_true",
                       help="Do not download products, just print curl command", default=False)
     parser.add_option("-d", "--start_date", dest="start_date", action="store", type="string",
@@ -104,7 +104,7 @@ else:
     parser.add_option("-f", "--end_date", dest="end_date", action="store", type="string",
                       help="end date, fmt('2015-12-23')", default=None)
     parser.add_option('-p', '--platform', type='choice', action='store', dest='platform',
-                      choices=['LANDSAT5', 'LANDSAT7', 'LANDSAT8', 'SPOT1', 'SPOT2', 'SPOT3', 'SPOT4', 'SPOT5', 'SENTINEL2A', 'SENTINEL2B', 'VENUS'],  help='Satellite',)
+                      choices=['LANDSAT5', 'LANDSAT7', 'LANDSAT8', 'SPOT1', 'SPOT2', 'SPOT3', 'SPOT4', 'SPOT5', 'SENTINEL2A', 'SENTINEL2B', 'VENUS', 'VENUSVM05'],  help='Satellite',)
     parser.add_option('-m', '--maxcloud', type='int', action='store', dest='maxcloud',
                       default=101,  help='Maximum cloud cover (%)')
     parser.add_option('-o', '--orbitNumber', type='int', action='store', dest='orbitNumber',
@@ -266,7 +266,7 @@ dict_query['completionDate'] = end_date
 dict_query['maxRecords'] = 500
 
 
-if options.collection == "SENTINEL2" or options.collection == "VENUS":
+if options.collection == "SENTINEL2" or options.collection == "VENUS" or options.collection == "VENUSVM05":
     dict_query['processingLevel'] = options.level
 
 if options.relativeOrbitNumber != None:
