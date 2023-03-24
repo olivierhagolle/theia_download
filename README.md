@@ -33,6 +33,10 @@ If you have an account at theia, you may download products using command lines l
 
  which downloads the VENUS products above KHUMBU site, acquired in January 2019.
 
+ - `python ./theia_download.py -s 'HECHUAN' -c VENUSVM05 -a config_theia.cfg -d 2023-03-17 -f 2023-03-18`
+
+ which downloads the latest VENUS VM05 products above HECHUAN site, acquired in March 2023.
+
 - `python ./theia_download.py -l 'Yaounde' -c SPOTWORLDHERITAGE -a config_theia.cfg -d 2012-01-01 -f 2013-01-01`
 
  
