@@ -196,7 +196,11 @@ if options.start_date is not None:
 
 try:
     config = {}
-    f = open(options.alternative_config)
+    if options.alternative_config is not None:
+        f = open(options.alternative_config)
+    else:
+        f = open("config_theia.cfg")
+
     for line in f.readlines():
         spliteline = line.split('=', 1)
         if len(spliteline) == 2:
